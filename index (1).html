@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>English World – El mundo del inglés</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-mode="primaria">
+
+  <!-- Dibujo del personaje guía (Globi). Se reutiliza con <use href="#globi"> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="globi" viewBox="0 0 120 120">
+      <ellipse cx="60" cy="113" rx="30" ry="5" fill="rgba(0,0,0,.18)"/>
+      <circle cx="60" cy="58" r="46" fill="#3fa9f5"/>
+      <path d="M30 34c8-10 22-8 26 0s-4 14-12 16-8 12-16 8-4-18 2-24z" fill="#5fd38d"/>
+      <path d="M78 72c8-4 18 0 18 8s-8 14-16 14-10-8-8-13 2-7 6-9z" fill="#5fd38d"/>
+      <path d="M74 20c6 0 12 4 14 8s-6 4-10 2-8-10-4-10z" fill="#5fd38d"/>
+      <circle cx="60" cy="58" r="46" fill="none" stroke="#1d2b53" stroke-width="4"/>
+      <circle cx="45" cy="54" r="10" fill="#fff"/>
+      <circle cx="75" cy="54" r="10" fill="#fff"/>
+      <circle cx="47" cy="55" r="5" fill="#1d2b53"/>
+      <circle cx="77" cy="55" r="5" fill="#1d2b53"/>
+      <circle cx="34" cy="70" r="5" fill="#ff8fa3" opacity=".7"/>
+      <circle cx="86" cy="70" r="5" fill="#ff8fa3" opacity=".7"/>
+      <path d="M46 72q14 14 28 0" fill="none" stroke="#1d2b53" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+
+  <!-- ===== Barra superior (visible fuera de la bienvenida) ===== -->
+  <header class="hud" id="hud" hidden>
+    <button class="btn-icon" id="btn-home" type="button" aria-label="Volver al menú principal" title="Menú principal">🏠</button>
+    <span class="hud-title">English World</span>
+    <span class="hud-stat" title="Puntos">💎 <b id="hud-points">0</b></span>
+    <span class="hud-stat" title="Estrellas">⭐ <b id="hud-stars">0</b>/15</span>
+    <button class="btn-icon" id="btn-chat" type="button" aria-label="Preguntar a Globi cómo se pronuncia" title="Pregúntale a Globi">💬</button>
+    <button class="btn-icon" id="btn-sound" type="button" aria-label="Activar o silenciar los efectos de sonido" title="Efectos de sonido">🔊</button>
+  </header>
+
+  <main>
+    <!-- ===== 1. Bienvenida ===== -->
+    <section class="screen active" id="screen-welcome">
+      <h1 class="logo">
+        <span class="logo-en">English</span>
+        <span class="logo-world">World</span>
+      </h1>
+      <p class="tagline">El mundo del inglés</p>
+      <div class="guide">
+        <svg class="globi"><use href="#globi"/></svg>
+        <p class="bubble">Hi! Soy Globi. Viaja conmigo por cinco mundos y aprende inglés jugando.</p>
+      </div>
+      <button class="btn btn-main" id="btn-start" type="button">Comenzar</button>
+    </section>
+
+    <!-- ===== 2. Selector de modalidad ===== -->
+    <section class="screen" id="screen-mode">
+      <div class="guide">
+        <svg class="globi small"><use href="#globi"/></svg>
+        <p class="bubble">¿En qué curso estás? Elige tu modalidad.</p>
+      </div>
+      <div class="mode-grid">
+        <button class="mode-card" type="button" data-mode="primaria">
+          <span class="mode-icon">🧒</span>
+          <span class="mode-name">Primaria</span>
+          <span class="mode-desc">Palabras básicas, muchas imágenes e instrucciones cortas.</span>
+        </button>
+        <button class="mode-card" type="button" data-mode="secundaria">
+          <span class="mode-icon">🧑‍🎓</span>
+          <span class="mode-name">Secundaria</span>
+          <span class="mode-desc">Más vocabulario, oraciones, traducción y lectura.</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== 3. Mapa de mundos ===== -->
+    <section class="screen" id="screen-map">
+      <div class="guide">
+        <svg class="globi small"><use href="#globi"/></svg>
+        <p class="bubble" id="map-bubble">Elige un mundo para jugar.</p>
+      </div>
+      <div class="map-progress">
+        <div class="map-progress-top">
+          <span id="rank-label">Rango: Explorer</span>
+          <span id="map-progress-text">0 de 15 estrellas</span>
+        </div>
+        <div class="bar"><div class="bar-fill" id="map-bar"></div></div>
+      </div>
+      <ol class="world-map" id="world-map"></ol>
+      <div class="map-actions">
+        <button class="btn btn-ghost" id="btn-change-mode" type="button">Cambiar modalidad</button>
+        <button class="btn btn-ghost" id="btn-reset" type="button">Borrar progreso</button>
+      </div>
+    </section>
+
+    <!-- ===== 4. Juego ===== -->
+    <section class="screen" id="screen-game">
+      <div class="game-top">
+        <button class="btn btn-ghost btn-small" id="btn-exit" type="button">🗺️ Mapa</button>
+        <span class="game-world" id="game-world"></span>
+        <span class="hearts" id="hearts" aria-label="Oportunidades"></span>
+      </div>
+      <div class="game-progress">
+        <div class="bar"><div class="bar-fill" id="game-bar"></div></div>
+        <span id="game-count">1/6</span>
+        <span class="game-score">💎 <b id="game-score">0</b></span>
+      </div>
+
+      <div class="question-card" id="question-area"></div>
+
+      <div class="feedback" id="feedback" hidden role="status" aria-live="polite">
+        <svg class="globi tiny"><use href="#globi"/></svg>
+        <div class="feedback-text">
+          <strong id="fb-title"></strong>
+          <span id="fb-detail"></span>
+        </div>
+        <button class="btn btn-ghost btn-small" id="fb-ask" type="button">💬 ¿Cómo suena?</button>
+        <button class="btn btn-main btn-small" id="btn-next" type="button">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- ===== 5. Resultados ===== -->
+    <section class="screen" id="screen-results">
+      <h2 class="results-title" id="res-title"></h2>
+      <div class="res-stars" id="res-stars" aria-label="Estrellas ganadas"></div>
+      <div class="guide">
+        <svg class="globi small"><use href="#globi"/></svg>
+        <p class="bubble" id="res-bubble"></p>
+      </div>
+      <dl class="res-stats">
+        <div><dt>Aciertos</dt><dd id="res-correct"></dd></div>
+        <div><dt>Puntos ganados</dt><dd id="res-points"></dd></div>
+        <div><dt>Mejor puntaje</dt><dd id="res-best"></dd></div>
+      </dl>
+      <div class="res-actions">
+        <button class="btn btn-main" id="btn-next-world" type="button">Siguiente mundo</button>
+        <button class="btn btn-alt" id="btn-retry" type="button">Repetir nivel</button>
+        <button class="btn btn-ghost" id="btn-to-map" type="button">Volver al mapa</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Chat de pronunciación con Globi (funciona sin internet) ===== -->
+  <aside class="chat" id="chat" hidden aria-label="Chat con Globi">
+    <header class="chat-head">
+      <svg class="globi tiny"><use href="#globi"/></svg>
+      <div class="chat-title">
+        <strong>Globi</strong>
+        <span>Ayuda de pronunciación, sin internet</span>
+      </div>
+      <button class="btn-icon" id="chat-close" type="button" aria-label="Cerrar el chat">✕</button>
+    </header>
+    <div class="chat-log" id="chat-log" aria-live="polite"></div>
+    <div class="chat-chips" id="chat-chips"></div>
+    <form class="chat-form" id="chat-form">
+      <input id="chat-input" type="text" autocomplete="off" maxlength="120"
+             placeholder="Escribe una palabra" aria-label="Tu mensaje para Globi">
+      <button class="btn btn-main btn-small" type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <div id="confetti" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
